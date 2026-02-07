@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirect Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: #141414;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid #2a2a2a;
+            padding: 40px;
+            text-align: center;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .image-wrapper {
+            margin-bottom: 30px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .video-wrapper {
+            margin-bottom: 30px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .video-wrapper.active {
+            display: block;
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .description {
+            font-size: 16px;
+            color: #a0a0a0;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        .btn-primary:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+        }
+
+        .timer-section {
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px solid #2a2a2a;
+        }
+
+        .timer-text {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 8px;
+        }
+
+        .timer {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer.warning {
+            color: #ff6b6b;
+        }
+
+        /* Notification Popup Styles */
+        .notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1f1f1f;
+            border: 1px solid #3a3a3a;
+            border-radius: 12px;
+            padding: 20px 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transform: translateX(calc(100% + 40px));
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification-text {
+            font-size: 15px;
+            color: #e0e0e0;
+            line-height: 1.5;
+        }
+
+        .notification-btn {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .notification-btn:hover {
+            background: #2563eb;
+            transform: scale(1.02);
+        }
+
+        .notification-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            padding: 4px;
+        }
+
+        .notification-close:hover {
+            color: #fff;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .notification {
+                bottom: 16px;
+                right: 16px;
+                left: 16px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image-wrapper">
+            <img src="thumbnail.png" alt="Featured Content">
+        </div>
+
+        <div class="video-wrapper" id="videoWrapper">
+            <video controls>
+                <source src="video1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div class="button-group">
+            <a href="#" class="btn btn-primary" id="actionBtn">See now! (Short Video)</a>
+        </div>
+
+        <div class="timer-section">
+            <p class="timer-text">Redirecting in</p>
+            <div class="timer" id="timer">12</div>
+        </div>
+    </div>
+
+    <!-- Notification Popup -->
+    <div class="notification" id="notification">
+        <button class="notification-close" id="notificationClose">&times;</button>
+        <p class="notification-text">Want to watch the full video?</p>
+        <a href="full-video.html" class="notification-btn">Click here</a>
+    </div>
+
+    <script>
+        let secondsLeft = 12;
+        const timerElement = document.getElementById('timer');
+        const actionBtn = document.getElementById('actionBtn');
+        const videoWrapper = document.getElementById('videoWrapper');
+        const videoElement = videoWrapper.querySelector('video');
+        const notification = document.getElementById('notification');
+        const notificationClose = document.getElementById('notificationClose');
+
+        const timerInterval = setInterval(() => {
+            secondsLeft--;
+            timerElement.textContent = secondsLeft;
+
+            if (secondsLeft <= 3) {
+                timerElement.classList.add('warning');
+            }
+
+            if (secondsLeft <= 0) {
+                clearInterval(timerInterval);
+                window.location.href = 'https://youtube.com';
+            }
+        }, 1000);
+
+        actionBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            clearInterval(timerInterval);
+            
+            videoWrapper.classList.add('active');
+            videoElement.play();
+
+            // Show notification after 2 seconds of watching
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 2000);
+        });
+
+        notificationClose.addEventListener('click', () => {
+            notification.classList.remove('show');
+        });
+    </script>
+</body>
+</html>
